@@ -41,10 +41,6 @@ local function connectToNetwork(aps)
   end
 end
 
-function module.setHostname(hostname)
-  wifi.sta.sethostname(hostname)
-end
-
 function module.start(callback)
   print("Configuring Wifi ...")
   wifi.setmode(wifi.STATION)
