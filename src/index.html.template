@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8">
+    <title>ESP8266</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+  </head>
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      margin-top: 50px;
+      background-image: url('https://imgnooz.com/sites/default/files/wallpaper/games/59207/portal-2-wallpapers-59207-2023915.jpg');
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+      background-color: #222220;
+      color: #adb7bd;
+      font-family: 'Lucida Sans', Arial, sans-serif;
+      font-size: 16px;
+    }
+    h1 {
+      text-align: center;
+      font-family: 'Lato', sans-serif;
+      font-size: 54px;
+      font-weight: 300;
+      margin: 0 0 58px;
+    }
+    li {
+      margin: 0 0 10px 0;
+    }
+    input {
+      color: #000000;
+    }
+    #input-wrapper {
+      width: 450px;
+      margin: 0 auto;
+    }
+    #info {
+      font-size: 12px;
+      width: 800px;
+      margin: 50px auto;
+    }
+  </style>
+  <script>
+    window.onload = function() {
+      document.getElementById("mode").value = "{{mode}}";
+      modeSelected();
+    };
+
+    function modeSelected() {
+      var select = document.getElementById("mode")
+      var opt = select.options[select.selectedIndex];
+      document.getElementById("color").disabled = !opt.dataset.showColor;
+      document.getElementById("mode_arg").disabled = !opt.dataset.showColorArg;
+      document.getElementById("speed").disabled = !opt.dataset.showSpeed;
+    }
+  </script>
+  <body>
+    <h1>{{device_name}}</h1>
+    <div id="input-wrapper">
+      <form method="post" class="pure-form pure-form-aligned">
+        <fieldset>
+          <div class="pure-control-group">
+            <label for="device_name">Device name</label><input id="device_name" type="text" name="device_name" value="{{device_name}}" placeholder="Device name">
+          </div>
+          <div class="pure-control-group">
+            <label for="num_leds">Number of LEDs</label><input id="num_leds" type="text" name="num_leds" value="{{num_leds}}" placeholder="Number of LEDs">
+          </div>
+          <div class="pure-control-group">
+            <label for="speed">Speed</label><input id="speed" type="text" name="speed" value="{{speed}}" placeholder="Speed">
+          </div>
+          <div class="pure-control-group">
+            <label for="brightness">Brightness</label><input id="brightness" type="text" name="brightness" value="{{brightness}}" placeholder="Brightness">
+          </div>
+          <div class="pure-control-group">
+            <label for="color">Color</label><input id="color" type="color" name="color" value="{{color}}" placeholder="Color">
+          </div>
+          <div class="pure-control-group">
+            <label for="mode">Mode</label><select name="mode" id="mode" onchange="modeSelected()">
+              <option value="static" data-show-color="true">Static</option>
+              <option value="blink" data-show-color="true" data-show-speed="true">Blink</option>
+              <option value="gradient" data-show-color="true" data-show-color-arg="true">Gradient</option>
+              <option value="gradient_rgb" data-show-color="true" data-show-color-arg="true">Gradient RGB</option>
+              <option value="random_color" data-show-speed="true">Random color</option>
+              <option value="rainbow" data-show-speed="true">Rainbow</option>
+              <option value="rainbow_cycle" data-show-speed="true">Rainbow cycle</option>
+              <option value="flicker" data-show-color="true" data-show-color-arg="true" data-show-speed="true">Flicker</option>
+              <option value="fire" data-show-speed="true">Fire</option>
+              <option value="fire_soft" data-show-speed="true">Fire soft</option>
+              <option value="fire_intense" data-show-speed="true">Fire intense</option>
+              <option value="halloween" data-show-speed="true">Halloween</option>
+              <option value="circus_combustus" data-show-speed="true">Circus combustus</option>
+              <option value="larson_scanner" data-show-color="true" data-show-speed="true">Larson scanner</option>
+              <option value="color_wipe" data-show-color="true" data-show-speed="true">Color wipe</option>
+              <option value="random_dot" data-show-color="true" data-show-speed="true">Random dot</option>
+            </select>
+          </div>
+          <div class="pure-control-group">
+            <label for="mode_arg">Mode argument</label><input id="mode_arg" type="text" name="mode_arg" value="{{mode_arg}}" placeholder="Mode argument">
+          </div>
+          <div class="pure-controls">
+            <button type="submit" class="pure-button">Submit</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div id="info">
+      <ul>
+        <li><strong>static</strong> fills the buffer with the color set through <strong>ws2812_effects.set_color()</strong></li>
+        <li><strong>blink</strong> fills the buffer with the color set through <strong>ws2812_effects.set_color()</strong> and starts blinking</li>
+        <li><strong>gradient</strong> fills the buffer with a gradient defined by the color values provided with the <strong>effect_param</strong>. This parameter must be a string containing the color values with same pixel size as the current buffer configuration. Minimum two colors must be provided. If more are provided, the strip is split in equal parts and the colors are used as intermediate colors. The gradient is calculated based on HSV color space, so no greyscale colors are supported as those cannot be converted to HSV.</li>
+        <li><strong>gradient_rgb</strong> similar to <strong>gradient</strong> but uses simple RGB value interpolation instead of conversions to the HSV color space.</li>
+        <li><strong>random_color</strong> fills the buffer completely with a random color and changes this color constantly</li>
+        <li><strong>rainbow</strong> animates through the full color spectrum, with the entire strip having the same color</li>
+        <li><strong>rainbow_cycle</strong> fills the buffer with a rainbow gradient. The optional second parameter states the number of repetitions (integer).</li>
+        <li><strong>flicker</strong> fills the buffer with the color set through <strong>ws2812_effects.set_color()</strong> and begins random flickering of pixels with a maximum flicker amount defined by the second parameter (integer, e.g. 50 to flicker with 50/255 of the color)</li>
+        <li><strong>fire</strong> is a fire flickering effect</li>
+        <li><strong>fire_soft</strong> is a soft fire flickering effect</li>
+        <li><strong>fire_intense</strong> is an intense fire flickering effect</li>
+        <li><strong>halloween</strong> fills the strip with purple and orange pixels and circles them</li>
+        <li><strong>circus_combustus</strong> fills the strip with red/white/black pixels and circles them</li>
+        <li><strong>larson_scanner</strong> is the K.I.T.T. scanner effect, based on the color set through <strong>ws2812_effects.set_color()</strong></li>
+        <li><strong>color_wipe</strong> fills the strip pixel by pixel with the color set through <strong>ws2812_effects.set_color()</strong> and then starts turning pixels off again from beginning to end.</li>
+        <li><strong>random_dot</strong> sets random dots to the color set through <strong>ws2812_effects.set_color()</strong> and fades them out again</li>
+      </ul>
+    </div>
+  </body>
+</html>
