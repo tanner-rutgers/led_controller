@@ -11,6 +11,7 @@ module.PORT = 80
 
 -- LEDS
 module.LEDS = {
+  ["onny_offy"] = "true",
   ["device_name"] = "",
   ["num_leds"] = 6,
   ["speed"] = 240,

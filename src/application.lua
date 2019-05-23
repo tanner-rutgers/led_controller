@@ -12,7 +12,9 @@ function receiver(sck, data)
   local request = http.parseRequest(data)
 
   if request.method == "POST" then
-    leds.setLEDs(request.getRequestData())
+    local params = request.getRequestData();
+    if params["onny_offy"] == nil then params["onny_offy"] = "false" end
+    leds.setLEDs(params)
   end
 
   request = nil

@@ -46,6 +46,8 @@
     window.onload = function() {
       document.getElementById("mode").value = "{{mode}}";
       modeSelected();
+
+      document.getElementById("onny_offy").checked = {{onny_offy}};
     };
 
     function modeSelected() {
@@ -61,6 +63,9 @@
     <div id="input-wrapper">
       <form method="post" class="pure-form pure-form-aligned">
         <fieldset>
+          <div class="pure-control-group">
+            <label for="onny_offy">Enabled</label><input id="onny_offy" type="checkbox" name="onny_offy" value="true">
+          </div>
           <div class="pure-control-group">
             <label for="device_name">Device name</label><input id="device_name" type="text" name="device_name" value="{{device_name}}" placeholder="Device name">
           </div>

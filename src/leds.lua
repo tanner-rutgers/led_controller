@@ -49,7 +49,7 @@ local function updateLEDs(config)
   ws2812_effects.set_brightness(config["brightness"])
   ws2812_effects.set_color(hexToGRB(config["color"]))
   ws2812_effects.set_mode(config["mode"], config["mode_arg"])
-  ws2812_effects.start()
+  if config["onny_offy"] == "true" then ws2812_effects.start() end
 end
 
 function module.setLEDs(params)
