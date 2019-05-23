@@ -29,7 +29,7 @@
     li {
       margin: 0 0 10px 0;
     }
-    input {
+    input, select {
       color: #000000;
     }
     #input-wrapper {
