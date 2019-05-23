@@ -43,7 +43,7 @@ function module.start()
 
   print("====================================")
   print("Server Started")
-  print("Open " .. wifi.sta.getip() .. " or " .. wifi.sta.gethostname() .. " in your browser")
+  print("Open " .. wifi.sta.getip() .. " in your browser")
   print("====================================")
 
   s:listen(config.PORT, function(connection)

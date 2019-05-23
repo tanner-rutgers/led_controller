@@ -25,12 +25,13 @@ end
 
 local function connectToNetwork(aps)
   if aps then
+    print("Looking for network " .. config.WIFI.SSID .. "...")
     for key, _ in pairs(aps) do
+      print("Found " .. key)
       if key == config.WIFI.SSID then
-        wifi.sta.sethostname(config.HOSTNAME)
+        print("Connecting to " .. key .. " ...")
         wifi.sta.config({ssid=config.WIFI.SSID, pwd=config.WIFI.PWD})
         wifi.sta.connect()
-        print("Connecting to " .. key .. " ...")
 
         timer:alarm(2500, tmr.ALARM_AUTO, waitForIP)
       end

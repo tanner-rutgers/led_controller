@@ -2,17 +2,16 @@ local module = {}
 
 -- WIFI
 module.WIFI = {
-  SSID = "FIX ME",
+  SSID = "CHANGE ME",
   PWD = ""
 }
 
 -- WEB SERVER
 module.PORT = 80
-module.HOSTNAME = "leds"
 
 -- LEDS
 module.LEDS = {
-  ["device_name"] = "<does not compute>",
+  ["device_name"] = "",
   ["num_leds"] = 6,
   ["speed"] = 240,
   ["brightness"] = 100,
