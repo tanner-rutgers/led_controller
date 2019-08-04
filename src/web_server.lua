@@ -1,50 +1,33 @@
 local wifi = require("wifi")
-local tmr = require("tmr")
-
 local app = require("application")
 local config = require("config")
 
 local module = {}
 
-local timer = tmr.create()
-
-local function waitForIP()
-  if wifi.sta.getip() == nil then
-    print("IP unavailable, Waiting...")
-  else
-    timer:unregister()
-    print("====================================")
-    print("ESP8266 mode is: " .. wifi.getmode())
-    print("MAC address is: " .. wifi.ap.getmac())
-    print("IP is ".. wifi.sta.getip())
-    print("====================================")
-
-    app.start()
-  end
+local wifi_connect_event = function(T)
+  print("Connection to " .. T.SSID .. " established!")
+  print("Waiting for IP address...")
 end
 
-local function connectToNetwork(aps)
-  if aps then
-    print("Looking for network " .. config.WIFI.SSID .. "...")
-    for key, _ in pairs(aps) do
-      print("Found " .. key)
-      if key == config.WIFI.SSID then
-        print("Connecting to " .. key .. " ...")
-        wifi.sta.config({ssid=config.WIFI.SSID, pwd=config.WIFI.PWD})
-        wifi.sta.connect()
+local wifi_got_ip_event = function(T)
+  print("Wifi connection is ready!")
 
-        timer:alarm(2500, tmr.ALARM_AUTO, waitForIP)
-      end
-    end
-  else
-    print("Error getting AP list")
-  end
+  print("============================")
+  print("MAC Address: " .. wifi.ap.getmac())
+  print("IP Address: " .. wifi.sta.getip())
+  print("============================")
+
+  app.start()
 end
 
-function module.start(callback)
+function module.start()
   print("Configuring Wifi ...")
+
+  wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
+  wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, wifi_got_ip_event)
+
   wifi.setmode(wifi.STATION)
-  wifi.sta.getap(connectToNetwork)
+  wifi.sta.config({ssid=config.WIFI.SSID, pwd=config.WIFI.PWD})
 end
 
 return module
