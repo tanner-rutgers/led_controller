@@ -1,5 +1,4 @@
 local wifi = require("wifi")
-local app = require("application")
 local config = require("config")
 
 local module = {}
@@ -16,15 +15,16 @@ local wifi_got_ip_event = function(T)
   print("MAC Address: " .. wifi.ap.getmac())
   print("IP Address: " .. wifi.sta.getip())
   print("============================")
-
-  app.start()
 end
 
-function module.start()
+function module.start(callback)
   print("Configuring Wifi ...")
 
   wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
-  wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, wifi_got_ip_event)
+  wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
+    wifi_got_ip_event(T)
+    callback()
+  end)
 
   wifi.setmode(wifi.STATION)
   wifi.sta.config({ssid=config.WIFI.SSID, pwd=config.WIFI.PWD})

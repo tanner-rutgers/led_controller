@@ -1,10 +1,11 @@
 local leds = require("leds")
-local web_server = require("web_server")
+local network = require("network")
+local application = require("application")
 
 local function start()
   node.stripdebug(3)
   leds.start()
-  web_server.start()
+  network.start(application.start)
 end
 
 -- wait a bit so we can flash this thing out of a restart loop
