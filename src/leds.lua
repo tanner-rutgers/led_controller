@@ -3,22 +3,25 @@ local file = require("file")
 
 local module = {}
 
-function module.getConfig()
+local function getConfig()
   local config = {}
 
   if file.open("config.json", "r") then
+    print("Loading config from config.json")
     config = sjson.decode(file.read())
     file.close()
   else
+    print("Loading config from config.lua")
     config = require("config").LEDS
   end
 
   return config
 end
 
-local function saveConfig(params)
+local function saveConfig(config)
   if file.open("config.json", "w") then
-    file.write(sjson.encode(params) .. "\n")
+    print("Saving config.json")
+    file.write(sjson.encode(config) .. "\n")
     file.close()
   else
     print("Could not open config.json to write...")
@@ -29,18 +32,6 @@ local function hexToGRB(hex)
   hex = hex:gsub("#","")
   r, g, b = tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
   return g, r, b
-end
-
-local function getUpdatedConfig(newValues)
-  local config = module.getConfig()
-
-  if newValues ~= nil then
-    for key, val in pairs(newValues) do
-      if config[key] then config[key] = val end
-    end
-  end
-
-  return config
 end
 
 local function updateLEDs(config)
@@ -59,9 +50,27 @@ local function updateLEDs(config)
 end
 
 function module.setLEDs(params)
-  local config = getUpdatedConfig(params)
-  updateLEDs(config)
-  saveConfig(config)
+  local config = getConfig()
+
+  local changed = false
+  if params == nil then
+    changed = true
+  else
+    for key, val in pairs(params) do
+      if config[key] ~= nil and config[key] ~= val then
+        config[key] = val
+        changed = true
+      end
+    end
+  end
+
+  if changed then
+    print("Updating LEDs")
+    updateLEDs(config)
+    saveConfig(config)
+  else
+    print("Not updating LEDs, no changes")
+  end
 end
 
 function module.start()

@@ -23,7 +23,7 @@ function module.start(callback)
   wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
   wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
     wifi_got_ip_event(T)
-    callback()
+    if callback ~= nil then callback() end
   end)
 
   wifi.setmode(wifi.STATION)
