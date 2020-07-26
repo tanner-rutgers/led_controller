@@ -18,7 +18,7 @@ end
 
 local function saveConfig(params)
   if file.open("config.json", "w") then
-    file.write(sjson.encode(params))
+    file.write(sjson.encode(params) .. "\n")
     file.close()
   else
     print("Could not open config.json to write...")
@@ -34,8 +34,10 @@ end
 local function getUpdatedConfig(newValues)
   local config = module.getConfig()
 
-  for key, val in pairs(newValues) do
-    if config[key] then config[key] = val end
+  if newValues ~= nil then
+    for key, val in pairs(newValues) do
+      if config[key] then config[key] = val end
+    end
   end
 
   return config
@@ -63,11 +65,8 @@ function module.setLEDs(params)
 end
 
 function module.start()
-  local config = module.getConfig()
-
   ws2812.init(ws2812.MODE_SINGLE)
-
-  module.setLEDs(config)
+  module.setLEDs()
 end
 
 return module
