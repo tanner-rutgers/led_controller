@@ -54,7 +54,7 @@ end
 
 local on_disconnect = function(client)
   print("Disconnected from " .. HOST)
-  connect_to_mqtt(client)
+  tmr.create():alarm(5000, tmr.ALARM_SINGLE, function() connect_to_mqtt(client) end)
 end
 
 function module.start()

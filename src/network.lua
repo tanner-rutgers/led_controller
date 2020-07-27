@@ -1,33 +1,42 @@
 local wifi = require("wifi")
-local config = require("config")
+local enduser_setup = require("enduser_setup")
 
 local module = {}
 
-local wifi_connect_event = function(T)
-  print("Connection to " .. T.SSID .. " established!")
-  print("Waiting for IP address...")
-end
-
-local wifi_got_ip_event = function(T)
+local wifi_on_connect = function(callback)
   print("Wifi connection is ready!")
 
-  print("============================")
-  print("MAC Address: " .. wifi.ap.getmac())
-  print("IP Address: " .. wifi.sta.getip())
-  print("============================")
+  local timer = tmr.create()
+  timer:alarm(3000, tmr.ALARM_AUTO, function()
+    if wifi.sta.getip() == nil then
+      print("Waiting for IP...")
+    else
+       print("Got IP address: " .. wifi.sta.getip())
+       timer:unregister()
+       if callback ~= nil then callback() end
+    end
+  end)
+end
+
+local wifi_on_error = function(err, callback)
+  print("Error connecting WiFi: " .. err)
 end
 
 function module.start(callback)
   print("Configuring Wifi ...")
+  enduser_setup.start(
+    -- on success
+    function()
+      wifi_on_connect(callback)
+    end,
+    -- on failure
+    function(err, str)
+      wifi_on_error(str, callback)
+    end,
+    -- on debug
+    print
+  )
 
-  wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
-  wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
-    wifi_got_ip_event(T)
-    if callback ~= nil then callback() end
-  end)
-
-  wifi.setmode(wifi.STATION)
-  wifi.sta.config({ssid=config.WIFI.SSID, pwd=config.WIFI.PWD})
 end
 
 return module

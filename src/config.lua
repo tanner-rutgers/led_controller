@@ -1,12 +1,5 @@
 local module = {}
 
-module.WIFI = {
-  SSID = "ssid",
-  PWD = "pwd"
-}
-
-module.PORT = 80
-
 module.LEDS = {
   ["enabled"] = "true",
   ["device_name"] = "",
