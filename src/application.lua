@@ -8,6 +8,7 @@ local config = require("config")
 
 local module = {}
 
+local HOST = config.MQTT.HOST
 local CLIENT_ID = wifi.sta.getmac():lower():gsub(":","_")
 local CLIENT_TOPIC = "/clients/" .. CLIENT_ID
 local STATE_TOPIC = CLIENT_TOPIC .. "/state"
@@ -30,34 +31,37 @@ local on_connect = function(client)
   subscribe_to_leds(client)
 end
 
-local on_connect_failure = function(client, reason)
-  print("Could not connect to " .. config.MQTT.HOST .. ": ", reason)
-end
-
 local on_message = function(client, topic, data)
   if data ~= nil then
+    print("Received message on topic " .. topic .. ": " .. data)
     leds.setLEDs(sjson.decode(data))
+  else
+    print("Received nil data on topic " .. topic)
   end
 end
 
-local connect_to_mqtt = function(client)
-  print("Connecting to " .. config.MQTT.HOST)
-  client:connect(config.MQTT.HOST, 1883, false, on_connect, on_connect_failure)
+local connect_to_mqtt
+local on_connect_failure = function(client, reason)
+  print("Could not connect to " .. HOST .. ": ", reason)
+  tmr.create():alarm(5000, tmr.ALARM_SINGLE, function() connect_to_mqtt(client) end)
+end
+
+
+connect_to_mqtt = function(client)
+  print("Connecting to " .. HOST)
+  client:connect(HOST, 1883, false, on_connect, on_connect_failure)
 end
 
 local on_disconnect = function(client)
-  print("Disconnected from " .. config.MQTT.HOST)
+  print("Disconnected from " .. HOST)
   connect_to_mqtt(client)
 end
 
 function module.start()
-  print("Creating MQTT client...")
   local m = mqtt.Client(CLIENT_ID, 120, config.MQTT.USER, config.MQTT.PWD)
 
-  print("Sending MQTT lwt...")
   m:lwt(STATE_TOPIC, "0", 1, 1)
 
-  print("Setting up MQTT client callbacks...")
   m:on("connect", function(client) print("MQTT connected") end)
   m:on("offline", on_disconnect)
   m:on("message", on_message)
