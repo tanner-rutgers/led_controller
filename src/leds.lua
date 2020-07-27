@@ -40,7 +40,7 @@ local function updateLEDs(config)
   ws2812_effects.init(strip_buffer)
   ws2812_effects.stop()
   ws2812_effects.set_speed(config["speed"])
-  if config["onny_offy"] == "true" then
+  if config["enabled"] == "true" then
     ws2812_effects.set_brightness(config["brightness"])
   else
     ws2812_effects.set_brightness(0)

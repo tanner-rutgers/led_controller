@@ -8,7 +8,7 @@ module.WIFI = {
 module.PORT = 80
 
 module.LEDS = {
-  ["onny_offy"] = "true",
+  ["enabled"] = "true",
   ["device_name"] = "",
   ["num_leds"] = 10,
   ["speed"] = 240,
