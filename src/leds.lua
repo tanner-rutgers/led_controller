@@ -6,10 +6,11 @@ local module = {}
 local function getConfig()
   local config = {}
 
-  if file.open("config.json", "r") then
+  local fd = file.open("config.json", "r")
+  if fd then
     print("Loading config from config.json")
-    config = sjson.decode(file.read())
-    file.close()
+    config = sjson.decode(fd:readline())
+    fd:close(); fd = nil
   else
     print("Loading config from config.lua")
     config = require("config").LEDS
@@ -19,10 +20,10 @@ local function getConfig()
 end
 
 local function saveConfig(config)
-  if file.open("config.json", "w") then
-    print("Saving config.json")
-    file.write(sjson.encode(config) .. "\n")
-    file.close()
+  local fd = file.open("config.json", "w")
+  if fd then
+    fd:writeline(sjson.encode(config))
+    fd:close(); fd = nil
   else
     print("Could not open config.json to write...")
   end
