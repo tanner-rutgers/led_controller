@@ -12,9 +12,11 @@ module.LEDS = {
 }
 
 module.MQTT = {
-  HOST = "host",
-  USER = "user",
-  PWD = "pwd"
+}
+
+module.WIFI = {
+  SSID = "SSID",
+  PWD = "PWD"
 }
 
 return module
